@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/joho/godotenv"
 	_ "github.com/sater-151/tt-workmate/docs"
 	"github.com/sater-151/tt-workmate/internal/config"
 	"github.com/sater-151/tt-workmate/internal/controller/rest"
@@ -23,18 +22,18 @@ import (
 // @BasePath	/api
 func main() {
 	logg.Init()
-	if err := godotenv.Load(); err != nil {
+	if err := config.Init(); err != nil {
 		logger.Error(err)
 		return
 	}
-	service := taskManager.New()
+	taskManager := taskManager.New()
 
 	serverConfig := config.GetServerConfig()
 	r := chi.NewRouter()
 
-	r.Post("/api/task/new", rest.CreateTask(service))
-	r.Delete("/api/task/delete", rest.DeleteTask(service))
-	r.Get("/api/task/info", rest.GetTaskInfo(service))
+	r.Post("/api/task/new", rest.CreateTask(taskManager))
+	r.Delete("/api/task/delete", rest.DeleteTask(taskManager))
+	r.Get("/api/task/info", rest.GetTaskInfo(taskManager))
 
 	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("/swagger/doc.json")))
 

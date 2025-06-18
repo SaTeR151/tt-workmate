@@ -4,7 +4,7 @@
         "description": "Server for create, read and delete tasks",
         "title": "Test Task I/O bound",
         "contact": {},
-        "version": "0.6"
+        "version": "0.6.1"
     },
     "host": "localhost:8080",
     "basePath": "/api",
@@ -32,11 +32,17 @@
                     "204": {
                         "description": "No Content",
                         "schema": {
-                            "$ref": "#/definitions/rest.ResponceId"
+                            "$ref": "#/definitions/dto.ResponceId"
                         }
                     },
-                    "default": {
-                        "description": "",
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/restutils.HTTPError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
                         "schema": {
                             "$ref": "#/definitions/restutils.HTTPError"
                         }
@@ -67,7 +73,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/service.TaskInfo"
+                            "$ref": "#/definitions/taskManager.TaskInfo"
                         }
                     },
                     "400": {
@@ -81,7 +87,6 @@
         },
         "/api/task/new": {
             "post": {
-                "description": "Create a new task and start processing it",
                 "produces": [
                     "application/json"
                 ],
@@ -93,7 +98,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/rest.ResponceId"
+                            "$ref": "#/definitions/dto.ResponceId"
                         }
                     }
                 }
@@ -101,7 +106,7 @@
         }
     },
     "definitions": {
-        "rest.ResponceId": {
+        "dto.ResponceId": {
             "type": "object",
             "properties": {
                 "id": {
@@ -120,7 +125,7 @@
                 }
             }
         },
-        "service.TaskInfo": {
+        "taskManager.TaskInfo": {
             "type": "object",
             "properties": {
                 "create_date": {
