@@ -2,10 +2,16 @@ package config
 
 import (
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 type ServerConfig struct {
 	Port string
+}
+
+func Init() error {
+	return godotenv.Load()
 }
 
 func GetServerConfig() ServerConfig {

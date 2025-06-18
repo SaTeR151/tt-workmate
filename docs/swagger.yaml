@@ -1,6 +1,6 @@
 basePath: /api
 definitions:
-  rest.ResponceId:
+  dto.ResponceId:
     properties:
       id:
         type: string
@@ -12,7 +12,7 @@ definitions:
       error:
         type: string
     type: object
-  service.TaskInfo:
+  taskManager.TaskInfo:
     properties:
       create_date:
         type: string
@@ -26,7 +26,7 @@ info:
   contact: {}
   description: Server for create, read and delete tasks
   title: Test Task I/O bound
-  version: "0.6"
+  version: 0.6.1
 paths:
   /api/task/delete:
     delete:
@@ -43,9 +43,13 @@ paths:
         "204":
           description: No Content
           schema:
-            $ref: '#/definitions/rest.ResponceId'
-        default:
-          description: ""
+            $ref: '#/definitions/dto.ResponceId'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/restutils.HTTPError'
+        "403":
+          description: Forbidden
           schema:
             $ref: '#/definitions/restutils.HTTPError'
       summary: Delete task
@@ -66,7 +70,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/service.TaskInfo'
+            $ref: '#/definitions/taskManager.TaskInfo'
         "400":
           description: Bad Request
           schema:
@@ -76,14 +80,13 @@ paths:
       - Task
   /api/task/new:
     post:
-      description: Create a new task and start processing it
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/rest.ResponceId'
+            $ref: '#/definitions/dto.ResponceId'
       summary: Create a new task
       tags:
       - Task

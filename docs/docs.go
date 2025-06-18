@@ -38,11 +38,17 @@ const docTemplate = `{
                     "204": {
                         "description": "No Content",
                         "schema": {
-                            "$ref": "#/definitions/rest.ResponceId"
+                            "$ref": "#/definitions/dto.ResponceId"
                         }
                     },
-                    "default": {
-                        "description": "",
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/restutils.HTTPError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
                         "schema": {
                             "$ref": "#/definitions/restutils.HTTPError"
                         }
@@ -73,7 +79,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/service.TaskInfo"
+                            "$ref": "#/definitions/taskManager.TaskInfo"
                         }
                     },
                     "400": {
@@ -87,7 +93,6 @@ const docTemplate = `{
         },
         "/api/task/new": {
             "post": {
-                "description": "Create a new task and start processing it",
                 "produces": [
                     "application/json"
                 ],
@@ -99,7 +104,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/rest.ResponceId"
+                            "$ref": "#/definitions/dto.ResponceId"
                         }
                     }
                 }
@@ -107,7 +112,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "rest.ResponceId": {
+        "dto.ResponceId": {
             "type": "object",
             "properties": {
                 "id": {
@@ -126,7 +131,7 @@ const docTemplate = `{
                 }
             }
         },
-        "service.TaskInfo": {
+        "taskManager.TaskInfo": {
             "type": "object",
             "properties": {
                 "create_date": {
@@ -145,7 +150,7 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "0.6",
+	Version:          "0.6.1",
 	Host:             "localhost:8080",
 	BasePath:         "/api",
 	Schemes:          []string{},
