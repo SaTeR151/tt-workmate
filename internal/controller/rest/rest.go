@@ -17,10 +17,18 @@ type HTTPError struct {
 	Error string `json:"error"`
 }
 
-type RespoceId struct {
+type ResponceId struct {
 	Id string `json:"id"`
 }
 
+// CreateTask godoc
+//
+//	@Summary		Create a new task
+//	@Description	Create a new task and start processing it
+//	@Tags			Task
+//	@Produce		json
+//	@Success		201	{object}	rest.ResponceId
+//	@Router			/api/task/new [post]
 func CreateTask(s service.ServiceInterface) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 		logger.Info("creating task")
@@ -28,11 +36,22 @@ func CreateTask(s service.ServiceInterface) http.HandlerFunc {
 		logger.Info("task created")
 		go s.Processing(id)
 		res.WriteHeader(http.StatusCreated)
-		json.NewEncoder(res).Encode(RespoceId{Id: id})
+		json.NewEncoder(res).Encode(ResponceId{Id: id})
 		logger.Info("id sended")
 	}
 }
 
+// DeleteTask godoc
+//
+//	@Summary		Delete task
+//	@Description	Delete finished task by id
+//	@Tags			Task
+//	@Produce		json
+//	@Param			id	query		string	true	"task id"
+//	@Success		204	{object}	rest.ResponceId
+//	@Failure		400	{object}	restutils.HTTPError
+//	@Failure		403	{object}	restutils.HTTPError
+//	@Router			/api/task/delete [delete]
 func DeleteTask(s service.ServiceInterface) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 		logger.Info("deleting task")
@@ -42,9 +61,8 @@ func DeleteTask(s service.ServiceInterface) http.HandlerFunc {
 			restutils.Error(res, ErrorIDRequired.Error(), http.StatusBadRequest)
 			return
 		}
-		err := s.DeleteTask(id)
-		if err != nil {
-			logger.Error(err.Error())
+		if err := s.DeleteTask(id); err != nil {
+			logger.Warn(err.Error())
 			if err == service.ErrorTaskNotFound {
 				restutils.Error(res, err.Error(), http.StatusBadRequest)
 			} else {
@@ -57,6 +75,16 @@ func DeleteTask(s service.ServiceInterface) http.HandlerFunc {
 	}
 }
 
+// GetTaskInfo godoc
+//
+//	@Summary		Get task info
+//	@Description	Get task status, date of creation and processing time by id
+//	@Tags			Task
+//	@Produce		json
+//	@Param			id	query		string	true	"task id"
+//	@Success		200	{object}	service.TaskInfo
+//	@Failure		400	{object}	restutils.HTTPError
+//	@Router			/api/task/info [get]
 func GetTaskInfo(s service.ServiceInterface) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 		logger.Info("getting task info")

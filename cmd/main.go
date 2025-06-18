@@ -16,13 +16,11 @@ import (
 )
 
 //	@title			Test Task I/O bound
-//	@version		0.5.2
+//	@version		0.6
 //	@description	Server for create, read and delete tasks
 
-//	@host		localhost:*
-//	@BasePath	/
-
-// Logger Configuration
+// @host		localhost:*
+// @BasePath	/api
 func main() {
 	logg.Init()
 	if err := godotenv.Load(); err != nil {

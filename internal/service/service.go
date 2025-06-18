@@ -93,9 +93,9 @@ func (s *Service) DeleteTask(guid string) error {
 	if _, ok := s.taskList[guid]; !ok {
 		return ErrorTaskNotFound
 	}
-	if s.taskList[guid].status == statuses[len(statuses)-1] {
-		delete(s.taskList, guid)
-		return nil
+	if s.taskList[guid].status != statuses[len(statuses)-1] {
+		return ErrorTaskInProcess
 	}
-	return ErrorTaskInProcess
+	delete(s.taskList, guid)
+	return nil
 }
