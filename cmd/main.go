@@ -10,13 +10,13 @@ import (
 	"github.com/sater-151/tt-workmate/internal/config"
 	"github.com/sater-151/tt-workmate/internal/controller/rest"
 	logg "github.com/sater-151/tt-workmate/internal/logger"
-	"github.com/sater-151/tt-workmate/internal/service"
+	"github.com/sater-151/tt-workmate/internal/services/taskManager"
 	logger "github.com/sirupsen/logrus"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 //	@title			Test Task I/O bound
-//	@version		0.6
+//	@version		0.6.1
 //	@description	Server for create, read and delete tasks
 
 // @host		localhost:8080
@@ -27,7 +27,7 @@ func main() {
 		logger.Error(err)
 		return
 	}
-	service := service.CreateTaskList()
+	service := taskManager.New()
 
 	serverConfig := config.GetServerConfig()
 	r := chi.NewRouter()
