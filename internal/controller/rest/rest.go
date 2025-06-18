@@ -24,7 +24,6 @@ type ResponceId struct {
 // CreateTask godoc
 //
 //	@Summary		Create a new task
-//	@Description	Create a new task and start processing it
 //	@Tags			Task
 //	@Produce		json
 //	@Success		201	{object}	rest.ResponceId

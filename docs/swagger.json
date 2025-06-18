@@ -4,9 +4,9 @@
         "description": "Server for create, read and delete tasks",
         "title": "Test Task I/O bound",
         "contact": {},
-        "version": "0.5.2"
+        "version": "0.6"
     },
-    "host": "localhost:*",
+    "host": "localhost:8080",
     "basePath": "/api",
     "paths": {
         "/api/task/delete": {
@@ -35,14 +35,8 @@
                             "$ref": "#/definitions/rest.ResponceId"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/restutils.HTTPError"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
+                    "default": {
+                        "description": "",
                         "schema": {
                             "$ref": "#/definitions/restutils.HTTPError"
                         }

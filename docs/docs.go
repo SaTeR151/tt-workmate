@@ -41,14 +41,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/rest.ResponceId"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/restutils.HTTPError"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
+                    "default": {
+                        "description": "",
                         "schema": {
                             "$ref": "#/definitions/restutils.HTTPError"
                         }
@@ -151,8 +145,8 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "0.5.2",
-	Host:             "localhost:*",
+	Version:          "0.6",
+	Host:             "localhost:8080",
 	BasePath:         "/api",
 	Schemes:          []string{},
 	Title:            "Test Task I/O bound",
