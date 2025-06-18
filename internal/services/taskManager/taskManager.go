@@ -1,4 +1,4 @@
-package service
+package taskManager
 
 import (
 	"errors"
@@ -38,7 +38,7 @@ type TaskInfo struct {
 	ProcessTime string `json:"process_time"`
 }
 
-func CreateTaskList() *Service {
+func New() *Service {
 	return &Service{
 		taskList: make(map[string]*Task),
 	}

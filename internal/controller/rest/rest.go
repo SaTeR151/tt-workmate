@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/sater-151/tt-workmate/internal/controller/rest/restutils"
-	"github.com/sater-151/tt-workmate/internal/service"
+	"github.com/sater-151/tt-workmate/internal/services/taskManager"
 	logger "github.com/sirupsen/logrus"
 )
 
@@ -28,7 +28,7 @@ type ResponceId struct {
 //	@Produce		json
 //	@Success		201	{object}	rest.ResponceId
 //	@Router			/api/task/new [post]
-func CreateTask(s service.ServiceInterface) http.HandlerFunc {
+func CreateTask(s taskManager.ServiceInterface) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 		logger.Info("creating task")
 		id := s.CreateTask()
@@ -51,7 +51,7 @@ func CreateTask(s service.ServiceInterface) http.HandlerFunc {
 //	@Failure		400	{object}	restutils.HTTPError
 //	@Failure		403	{object}	restutils.HTTPError
 //	@Router			/api/task/delete [delete]
-func DeleteTask(s service.ServiceInterface) http.HandlerFunc {
+func DeleteTask(s taskManager.ServiceInterface) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 		logger.Info("deleting task")
 		id := req.FormValue("id")
@@ -62,7 +62,7 @@ func DeleteTask(s service.ServiceInterface) http.HandlerFunc {
 		}
 		if err := s.DeleteTask(id); err != nil {
 			logger.Warn(err.Error())
-			if err == service.ErrorTaskNotFound {
+			if err == taskManager.ErrorTaskNotFound {
 				restutils.Error(res, err.Error(), http.StatusBadRequest)
 			} else {
 				restutils.Error(res, err.Error(), http.StatusForbidden)
@@ -84,7 +84,7 @@ func DeleteTask(s service.ServiceInterface) http.HandlerFunc {
 //	@Success		200	{object}	service.TaskInfo
 //	@Failure		400	{object}	restutils.HTTPError
 //	@Router			/api/task/info [get]
-func GetTaskInfo(s service.ServiceInterface) http.HandlerFunc {
+func GetTaskInfo(s taskManager.ServiceInterface) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 		logger.Info("getting task info")
 		id := req.FormValue("id")
