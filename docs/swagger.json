@@ -1,12 +1,138 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "API server for Song Library Application",
-        "title": "Song Library API",
+        "description": "Server for create, read and delete tasks",
+        "title": "Test Task I/O bound",
         "contact": {},
-        "version": "1.0"
+        "version": "0.6"
     },
     "host": "localhost:8080",
-    "basePath": "/",
-    "paths": {}
+    "basePath": "/api",
+    "paths": {
+        "/api/task/delete": {
+            "delete": {
+                "description": "Delete finished task by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Task"
+                ],
+                "summary": "Delete task",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "task id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ResponceId"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/restutils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/task/info": {
+            "get": {
+                "description": "Get task status, date of creation and processing time by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Task"
+                ],
+                "summary": "Get task info",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "task id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/service.TaskInfo"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/restutils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/task/new": {
+            "post": {
+                "description": "Create a new task and start processing it",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Task"
+                ],
+                "summary": "Create a new task",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ResponceId"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "rest.ResponceId": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "restutils.HTTPError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "service.TaskInfo": {
+            "type": "object",
+            "properties": {
+                "create_date": {
+                    "type": "string"
+                },
+                "process_time": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        }
+    }
 }

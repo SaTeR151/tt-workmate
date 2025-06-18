@@ -1,9 +1,90 @@
-basePath: /
+basePath: /api
+definitions:
+  rest.ResponceId:
+    properties:
+      id:
+        type: string
+    type: object
+  restutils.HTTPError:
+    properties:
+      code:
+        type: integer
+      error:
+        type: string
+    type: object
+  service.TaskInfo:
+    properties:
+      create_date:
+        type: string
+      process_time:
+        type: string
+      status:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
-  description: API server for Song Library Application
-  title: Song Library API
-  version: "1.0"
-paths: {}
+  description: Server for create, read and delete tasks
+  title: Test Task I/O bound
+  version: "0.6"
+paths:
+  /api/task/delete:
+    delete:
+      description: Delete finished task by id
+      parameters:
+      - description: task id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/rest.ResponceId'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/restutils.HTTPError'
+      summary: Delete task
+      tags:
+      - Task
+  /api/task/info:
+    get:
+      description: Get task status, date of creation and processing time by id
+      parameters:
+      - description: task id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/service.TaskInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/restutils.HTTPError'
+      summary: Get task info
+      tags:
+      - Task
+  /api/task/new:
+    post:
+      description: Create a new task and start processing it
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/rest.ResponceId'
+      summary: Create a new task
+      tags:
+      - Task
 swagger: "2.0"

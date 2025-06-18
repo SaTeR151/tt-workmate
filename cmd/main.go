@@ -16,13 +16,11 @@ import (
 )
 
 //	@title			Test Task I/O bound
-//	@version		0.5.2
+//	@version		0.6
 //	@description	Server for create, read and delete tasks
 
-//	@host		localhost:*
-//	@BasePath	/
-
-// Logger Configuration
+// @host		localhost:8080
+// @BasePath	/api
 func main() {
 	logg.Init()
 	if err := godotenv.Load(); err != nil {
@@ -38,9 +36,7 @@ func main() {
 	r.Delete("/api/task/delete", rest.DeleteTask(service))
 	r.Get("/api/task/info", rest.GetTaskInfo(service))
 
-	r.Get("/swagger/*", httpSwagger.Handler(
-		httpSwagger.URL("/swagger/doc.json"),
-	))
+	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("/swagger/doc.json")))
 
 	logger.Info(fmt.Sprintf("server start at port: %s\n", serverConfig.Port))
 	if err := http.ListenAndServe(":"+serverConfig.Port, r); err != nil {
