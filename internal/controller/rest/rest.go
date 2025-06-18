@@ -2,11 +2,20 @@ package rest
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
+	"github.com/sater-151/tt-workmate/internal/controller/rest/restutils"
 	"github.com/sater-151/tt-workmate/internal/service"
 	logger "github.com/sirupsen/logrus"
 )
+
+var ErrorIDRequired = errors.New("id required")
+
+type HTTPError struct {
+	Code  int    `json:"code"`
+	Error string `json:"error"`
+}
 
 type RespoceId struct {
 	Id string `json:"id"`
@@ -29,21 +38,22 @@ func DeleteTask(s service.ServiceInterface) http.HandlerFunc {
 		logger.Info("deleting task")
 		id := req.FormValue("id")
 		if id == "" {
-			logger.Error("id required")
-			http.Error(res, "id required", http.StatusBadRequest)
+			logger.Error(ErrorIDRequired)
+			restutils.Error(res, ErrorIDRequired.Error(), http.StatusBadRequest)
 			return
 		}
 		err := s.DeleteTask(id)
 		if err != nil {
 			logger.Error(err.Error())
 			if err == service.ErrorTaskNotFound {
-				http.Error(res, "Error: "+err.Error(), http.StatusBadRequest)
+				restutils.Error(res, err.Error(), http.StatusBadRequest)
 			} else {
-				http.Error(res, "Error: "+err.Error(), http.StatusForbidden)
+				restutils.Error(res, err.Error(), http.StatusForbidden)
 			}
 			return
 		}
 		res.WriteHeader(http.StatusNoContent)
+		logger.Info("task deleted")
 	}
 }
 
@@ -52,14 +62,14 @@ func GetTaskInfo(s service.ServiceInterface) http.HandlerFunc {
 		logger.Info("getting task info")
 		id := req.FormValue("id")
 		if id == "" {
-			logger.Error("id required")
-			http.Error(res, "id required", http.StatusBadRequest)
+			logger.Error(ErrorIDRequired)
+			restutils.Error(res, ErrorIDRequired.Error(), http.StatusBadRequest)
 			return
 		}
 		taskInfo, err := s.GetTaskInfo(id)
 		if err != nil {
 			logger.Error(err.Error())
-			http.Error(res, "Error: "+err.Error(), http.StatusBadRequest)
+			restutils.Error(res, err.Error(), http.StatusBadRequest)
 			return
 		}
 		res.WriteHeader(http.StatusOK)
