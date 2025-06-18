@@ -8,5 +8,5 @@ go mod download
 go run ./cmd/main.go
 ```
 # Swagger
-Документацию для проекта можно посмотреть после запуска сервера по [ссылке](http://localhost:8080/swagger/index.html):
+Документацию для проекта можно посмотреть после запуска сервера по [ссылке](http://localhost:8080/swagger/index.html):  
 http://localhost:8080/swagger/index.html
