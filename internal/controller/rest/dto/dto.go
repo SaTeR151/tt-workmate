@@ -8,3 +8,9 @@ type HTTPError struct {
 type ResponceId struct {
 	Id string `json:"id"`
 }
+
+type TaskInfo struct {
+	Status      string `json:"status"`
+	CreateDate  string `json:"create_date"`
+	ProcessTime string `json:"process_time"`
+}
