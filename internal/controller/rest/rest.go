@@ -18,7 +18,7 @@ import (
 //	@Produce		json
 //	@Success		201	{object}	dto.ResponceId
 //	@Router			/api/task/new [post]
-func CreateTask(s taskManager.Service) http.HandlerFunc {
+func CreateTask(s taskManager.TaskManagerService) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 		logger.Info("creating task")
 		id := s.CreateTask()
@@ -41,7 +41,7 @@ func CreateTask(s taskManager.Service) http.HandlerFunc {
 //	@Failure		400	{object}	restutils.HTTPError
 //	@Failure		403	{object}	restutils.HTTPError
 //	@Router			/api/task/delete [delete]
-func DeleteTask(s taskManager.Service) http.HandlerFunc {
+func DeleteTask(s taskManager.TaskManagerService) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 		logger.Info("deleting task")
 		id := req.FormValue("id")
@@ -74,7 +74,7 @@ func DeleteTask(s taskManager.Service) http.HandlerFunc {
 //	@Success		200	{object}	taskManager.TaskInfo
 //	@Failure		400	{object}	restutils.HTTPError
 //	@Router			/api/task/info [get]
-func GetTaskInfo(s taskManager.Service) http.HandlerFunc {
+func GetTaskInfo(s taskManager.TaskManagerService) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 		logger.Info("getting task info")
 		id := req.FormValue("id")

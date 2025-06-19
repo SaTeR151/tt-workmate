@@ -7,13 +7,14 @@ import (
 
 	"github.com/beevik/guid"
 	"github.com/sater-151/tt-workmate/internal/apperror"
+	"github.com/sater-151/tt-workmate/internal/controller/rest/dto"
 	logger "github.com/sirupsen/logrus"
 )
 
-type Service interface {
+type TaskManagerService interface {
 	CreateTask() string
 	StartTask(guid string)
-	GetTaskInfo(guid string) (TaskInfo, error)
+	GetTaskInfo(guid string) (dto.TaskInfo, error)
 	DeleteTask(guid string) error
 }
 
@@ -28,12 +29,6 @@ type Task struct {
 	status      string
 	createDate  time.Time
 	processTime string
-}
-
-type TaskInfo struct {
-	Status      string `json:"status"`
-	CreateDate  string `json:"create_date"`
-	ProcessTime string `json:"process_time"`
 }
 
 func New() *TaskManager {
@@ -66,8 +61,8 @@ func (tm *TaskManager) StartTask(guid string) {
 	logger.Info(fmt.Sprintf("task: %s completed", guid))
 }
 
-func (tm *TaskManager) GetTaskInfo(guid string) (TaskInfo, error) {
-	var taskInfo TaskInfo
+func (tm *TaskManager) GetTaskInfo(guid string) (dto.TaskInfo, error) {
+	var taskInfo dto.TaskInfo
 	if _, ok := tm.taskList[guid]; !ok {
 		return taskInfo, apperror.ErrorTaskNotFound
 	}
