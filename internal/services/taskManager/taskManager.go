@@ -8,6 +8,7 @@ import (
 	"github.com/beevik/guid"
 	"github.com/sater-151/tt-workmate/internal/apperror"
 	"github.com/sater-151/tt-workmate/internal/controller/rest/dto"
+	client "github.com/sater-151/tt-workmate/internal/pkg"
 
 	logger "github.com/sirupsen/logrus"
 )
@@ -22,13 +23,14 @@ type TaskManagerService interface {
 type TaskStatus string
 
 const (
-	StatusCreated   TaskStatus = "created"
-	StatusInProcess TaskStatus = "in process"
-	StatusCompleted TaskStatus = "completed"
+	StatusCreated    TaskStatus = "created"
+	StatusInProgress TaskStatus = "in progress"
+	StatusDone       TaskStatus = "done"
 )
 
 type TaskManager struct {
 	taskList map[string]*Task
+	client   client.TaskManagerPKG
 }
 
 type Task struct {
@@ -41,6 +43,7 @@ type Task struct {
 func New() *TaskManager {
 	return &TaskManager{
 		taskList: make(map[string]*Task),
+		client:   client.New(),
 	}
 }
 
@@ -55,15 +58,20 @@ func (tm *TaskManager) CreateTask() string {
 }
 
 func (tm *TaskManager) StartTask(guid string) {
-	logger.Info(fmt.Sprintf("task: %s in process", guid))
-	for i := 1; i < 6; i++ {
-		time.Sleep(time.Second * 30)
-		tm.taskList[guid].mu.Lock()
-		tm.taskList[guid].status = StatusInProcess // изменение стататусов задачи про процессе разработки
-		tm.taskList[guid].mu.Unlock()
-	}
+	logger.Info(fmt.Sprintf("task: %s in progress", guid))
+	var taskInfo dto.TaskInfo
+
+	tm.taskList[guid].mu.Lock()
+	tm.taskList[guid].status = StatusInProgress
+	taskInfo.Status = string(tm.taskList[guid].status)
+	taskInfo.CreateDate = tm.taskList[guid].createDate.Format(time.ANSIC)
+	tm.taskList[guid].mu.Unlock()
+
+	tm.client.SendTask(taskInfo)
+
 	tm.taskList[guid].mu.Lock()
 	tm.taskList[guid].processTime = time.Since(tm.taskList[guid].createDate).Round(time.Second).String()
+	tm.taskList[guid].status = StatusDone
 	tm.taskList[guid].mu.Unlock()
 	logger.Info(fmt.Sprintf("task: %s completed", guid))
 }
@@ -79,7 +87,7 @@ func (tm *TaskManager) GetTaskInfo(guid string) (dto.TaskInfo, error) {
 	taskInfo.CreateDate = tm.taskList[guid].createDate.Format(time.ANSIC)
 	tm.taskList[guid].mu.RUnlock()
 
-	if taskInfo.Status != string(StatusCompleted) {
+	if taskInfo.Status != string(StatusDone) {
 		tm.taskList[guid].mu.RLock()
 		taskInfo.ProcessTime = time.Since(tm.taskList[guid].createDate).Round(time.Second).String()
 		tm.taskList[guid].mu.RUnlock()
@@ -93,7 +101,7 @@ func (tm *TaskManager) DeleteTask(guid string) error {
 	if _, ok := tm.taskList[guid]; !ok {
 		return apperror.ErrorTaskNotFound
 	}
-	if tm.taskList[guid].status != StatusCompleted {
+	if tm.taskList[guid].status != StatusDone {
 		return apperror.ErrorTaskInProcess
 	}
 	delete(tm.taskList, guid)
