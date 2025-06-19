@@ -8,6 +8,7 @@ import (
 	"github.com/beevik/guid"
 	"github.com/sater-151/tt-workmate/internal/apperror"
 	"github.com/sater-151/tt-workmate/internal/controller/rest/dto"
+
 	logger "github.com/sirupsen/logrus"
 )
 
@@ -18,7 +19,13 @@ type TaskManagerService interface {
 	DeleteTask(guid string) error
 }
 
-var statuses = []string{"created", "in process one", "in process two", "in process three", "in process four", "done"}
+type TaskStatus string
+
+const (
+	StatusCreated   TaskStatus = "created"
+	StatusInProcess TaskStatus = "in process"
+	StatusCompleted TaskStatus = "completed"
+)
 
 type TaskManager struct {
 	taskList map[string]*Task
@@ -26,7 +33,7 @@ type TaskManager struct {
 
 type Task struct {
 	mu          *sync.RWMutex
-	status      string
+	status      TaskStatus
 	createDate  time.Time
 	processTime string
 }
@@ -41,7 +48,7 @@ func (tm *TaskManager) CreateTask() string {
 	id := guid.NewString()
 	tm.taskList[id] = &Task{
 		mu:         new(sync.RWMutex),
-		status:     statuses[0],
+		status:     StatusCreated,
 		createDate: time.Now(),
 	}
 	return id
@@ -52,7 +59,7 @@ func (tm *TaskManager) StartTask(guid string) {
 	for i := 1; i < 6; i++ {
 		time.Sleep(time.Second * 30)
 		tm.taskList[guid].mu.Lock()
-		tm.taskList[guid].status = statuses[i]
+		tm.taskList[guid].status = StatusInProcess // изменение стататусов задачи про процессе разработки
 		tm.taskList[guid].mu.Unlock()
 	}
 	tm.taskList[guid].mu.Lock()
@@ -68,11 +75,11 @@ func (tm *TaskManager) GetTaskInfo(guid string) (dto.TaskInfo, error) {
 	}
 
 	tm.taskList[guid].mu.RLock()
-	taskInfo.Status = tm.taskList[guid].status
+	taskInfo.Status = string(tm.taskList[guid].status)
 	taskInfo.CreateDate = tm.taskList[guid].createDate.Format(time.ANSIC)
 	tm.taskList[guid].mu.RUnlock()
 
-	if taskInfo.Status != statuses[len(statuses)-1] {
+	if taskInfo.Status != string(StatusCompleted) {
 		tm.taskList[guid].mu.RLock()
 		taskInfo.ProcessTime = time.Since(tm.taskList[guid].createDate).Round(time.Second).String()
 		tm.taskList[guid].mu.RUnlock()
@@ -86,7 +93,7 @@ func (tm *TaskManager) DeleteTask(guid string) error {
 	if _, ok := tm.taskList[guid]; !ok {
 		return apperror.ErrorTaskNotFound
 	}
-	if tm.taskList[guid].status != statuses[len(statuses)-1] {
+	if tm.taskList[guid].status != StatusCompleted {
 		return apperror.ErrorTaskInProcess
 	}
 	delete(tm.taskList, guid)

@@ -6,6 +6,7 @@ import (
 	logger "github.com/sirupsen/logrus"
 )
 
+// Logger Configuration
 func Init() {
 	logger.SetFormatter(&logger.TextFormatter{FullTimestamp: true})
 	lvl, ok := os.LookupEnv("LOG_LEVEL")
